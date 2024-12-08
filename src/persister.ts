@@ -53,13 +53,19 @@ if (process.env.USE_ACTIONS) {
             const createReleaseResponse = await octokit.rest.repos.createRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                tag_name: 'database-' + date.toISOString().replace(/:/g, '-'),
-                name: `Persisting database at ${date.toUTCString()}`,
+                tag_name: `database-${
+                    process.env.BACKUP_HANDLE?.replace(/\./g, '-')
+                }-${
+                    date.toISOString().replace(/:/g, '-')
+                }`,
+                name: `${process.env.BACKUP_HANDLE ?? path} snapshot (${date.toUTCString()})`,
                 draft: false,
                 prerelease: true
             });
 
-            await octokit.request<'POST {origin}/repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}'>({
+            await octokit.request<
+                'POST {origin}/repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}'
+            >({
                 method: "POST",
                 url: createReleaseResponse.data.upload_url,
                 headers: {

@@ -32,9 +32,18 @@ jobs:
       with:
         version: 9
     - run: pnpm install
+
     - run: pnpx tsx src/index.ts
       env:
-        FEED_URL: https://www.pcgamer.com/feeds.xml
+        BACKUP_HANDLE: lunabuna.sisters.moe
+        BSKY_USERNAME: ${{ secrets.BSKY_USERNAME }}
+        BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
+        USE_ACTIONS: 1
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - run: pnpx tsx src/index.ts
+      env:
+        BACKUP_HANDLE: spearcat.bsky.social
         BSKY_USERNAME: ${{ secrets.BSKY_USERNAME }}
         BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
         USE_ACTIONS: 1
