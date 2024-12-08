@@ -34,7 +34,7 @@ if (process.env.USE_ACTIONS) {
 
             const downloadUrl = getReleaseResponse.data?.[0]?.assets.find(e => e.name == osPath.basename(path))?.browser_download_url
             if (!downloadUrl) {
-                console.log(`no downloadUrl for ${getReleaseResponse.data[0].name}`);
+                console.log(`no downloadUrl for ${getReleaseResponse?.data?.[0]?.name}`);
                 return;
             }
 
