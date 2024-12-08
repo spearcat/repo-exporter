@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { persister } from './persister.js';
 import ZipStream, { FileDataInput } from "zip-stream";
 
-await persister.restoreDatabase(`${process.env.BACKUP_HANDLE}.repo.zip`);
+// await persister.restoreDatabase(`${process.env.BACKUP_HANDLE}.repo.zip`);
 
 import { XRPC, CredentialManager } from '@atcute/client';
 import { writeFile } from 'node:fs/promises';
