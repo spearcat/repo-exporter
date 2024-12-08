@@ -1,0 +1,44 @@
+{
+  "name": "bluerss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/artifact": "^2.1.11",
+    "@actions/github": "^6.0.0",
+    "@atcute/bluesky": "^1.0.7",
+    "@atcute/bluesky-richtext-builder": "^1.0.1",
+    "@atcute/client": "^2.0.3",
+    "@atcute/oauth-browser-client": "^1.0.7",
+    "@atcute/whitewind": "^1.0.2",
+    "@skyware/bot": "^0.3.6",
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
+    "kysely": "^0.27.4",
+    "mozjpeg": "^8.0.0",
+    "promisify-child-process": "^4.1.2",
+    "readable-stream": "^4.5.2",
+    "rss-parser": "^3.13.0",
+    "sharp": "^0.33.5",
+    "typedarray-to-buffer": "^4.0.0",
+    "zip-stream": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/compress-commons": "^7.0.1",
+    "@types/mozjpeg": "^5.0.2",
+    "@types/node": "^22.8.1",
+    "@types/readable-stream": "^4.0.18",
+    "@types/typedarray-to-buffer": "^4.0.4",
+    "@types/zip-stream": "^7.0.0",
+    "eslint": "^9.13.0"
+  },
+  "packageManager": "pnpm@10.0.0-beta.1+sha512.629de0531b9ae9a3f8e372d014ef8f5a57906d9a48095ced54bbfbd246b4136381478032c8d13819fd1eedde8330517a799ea6756eedd9a136e36524fa3083cf"
+}
