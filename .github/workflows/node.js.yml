@@ -27,6 +27,7 @@ jobs:
       matrix:
         handle:
           - spearcat.bsky.social
+          - lunabuna.sisters.moe
 
     name: Make snapshot of ${{ matrix.handle }}
     
