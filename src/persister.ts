@@ -54,9 +54,9 @@ if (process.env.USE_ACTIONS) {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 tag_name: `database-${
-                    process.env.BACKUP_HANDLE?.replace(/\./g, '-')
-                }-${
                     date.toISOString().replace(/:/g, '-')
+                }-${
+                    process.env.BACKUP_HANDLE?.replace(/\./g, '-')
                 }`,
                 name: `${process.env.BACKUP_HANDLE ?? path} snapshot (${date.toUTCString()})`,
                 draft: false,
