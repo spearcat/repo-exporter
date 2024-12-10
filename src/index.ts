@@ -13,20 +13,27 @@ import type { ZipArchiveEntry } from 'compress-commons';
 import { XRPCEx } from './xrpc-ex.js';
 import toBuffer from 'typedarray-to-buffer';
 import { At } from '@atcute/client/lexicons';
+import { parse } from "file-type-mime";
 
-const manager = new CredentialManager({ service: 'https://bsky.social' });
-const rpc = new XRPCEx({ handler: manager });
+let did: At.DID;
 
-await manager.login({
-    identifier: process.env.BSKY_USERNAME!,
-    password: process.env.BSKY_PASSWORD!
-});
-
-const { data: { did } } = await rpc.get('com.atproto.identity.resolveHandle', {
-	params: {
-		handle: process.env.BACKUP_HANDLE!,
-	},
-});
+if (process.env.BACKUP_HANDLE!.startsWith('did:')) {
+    did = process.env.BACKUP_HANDLE! as At.DID;
+} else {
+    const manager = new CredentialManager({ service: 'https://bsky.social' });
+    const rpc = new XRPCEx({ handler: manager });
+    
+    await manager.login({
+        identifier: process.env.BSKY_USERNAME!,
+        password: process.env.BSKY_PASSWORD!
+    });
+    
+    ({ data: { did } } = await rpc.get('com.atproto.identity.resolveHandle', {
+        params: {
+            handle: process.env.BACKUP_HANDLE!,
+        },
+    }));
+}
 
 /**
  * DID document
@@ -47,6 +54,27 @@ interface DidDocument {
 	}>;
 }
 
+/*!
+https://github.com/mary-ext/atcute
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 async function getPds(did: At.DID) {
     /**
      * Retrieves AT Protocol PDS endpoint from the DID document, if available
@@ -144,9 +172,9 @@ async function getPds(did: At.DID) {
     return getPdsEndpoint(didDocument);
 }
 
-console.log(did);
+console.log('DID:', did);
 const pds = await getPds(did);
-console.log(pds);
+console.log('PDS:', pds);
 
 const unauthedManager = new CredentialManager({ service: pds! });
 const unauthedRpc = new XRPCEx({ handler: unauthedManager });
@@ -194,8 +222,9 @@ await entry(archive, Readable.fromWeb(response.body! as any), { name: 'repo.car'
 console.log('listing blobs');
 const { cids: blobCids } = await unauthedRpc.paginatedListBlobs({ did });
 
+let i = 0;
 for (const cid of blobCids) {
-    console.log(`adding cid ${cid}`);
+    console.log(`adding cid ${cid} (${++i}/${blobCids.length})`);
 
     const { data: blob } = await unauthedRpc.get('com.atproto.sync.getBlob', {
         params: {
@@ -204,7 +233,11 @@ for (const cid of blobCids) {
         }
     });
 
-    await entry(archive, toBuffer(blob), { name: `${cid}.blob` });
+    const buf = toBuffer(blob);
+
+    const { ext } = parse(buf.buffer as ArrayBuffer) ?? { ext: 'blob' };
+
+    await entry(archive, buf, { name: `${cid}.${ext}` });
 }
 
 archive.finish();
